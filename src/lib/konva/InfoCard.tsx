@@ -1,6 +1,6 @@
-import React from 'react';
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { MousePointerClick, Move, Expand, Info, Trash2 } from "lucide-react"
 
 interface InfoCardProps {
   hasShapes: boolean;
@@ -9,67 +9,72 @@ interface InfoCardProps {
 
 export function InfoCard({ hasShapes, onClear }: InfoCardProps) {
   return (
-    <Card className="w-full max-w-270 shrink-0 shadow-sm min-h-[120px]">
-      <CardContent className="p-4 flex flex-col justify-between h-full">
-        <div className="flex items-center justify-between mb-3">
-          <header className="shrink-0 flex items-center gap-4">
-            <h1 className="text-lg font-medium tracking-widest uppercase opacity-90">Cartesian Coordinate Using KonvaJS</h1>
-          </header>
-          {hasShapes && (
+    <Card className="w-full max-w-[1080px] shrink-0 shadow-sm border-muted/40">
+      <CardHeader className="pb-2 pt-4 flex flex-row items-center justify-between space-y-0">
+        <div className="flex flex-col gap-1">
+            <CardTitle className="text-xl font-bold tracking-tight">Cartesian Coordinate System</CardTitle>
+            <p className="text-xs text-muted-foreground">Interactive geometry engine powered by React & Konva</p>
+        </div>
+        {hasShapes && (
             <Button 
                 onClick={onClear} 
-                className="h-7 px-4 bg-red-600 text-white hover:bg-red-700 border-none cursor-pointer text-xs"
+                variant="destructive"
+                size="sm"
+                className="h-8 text-xs gap-2"
               >
-                Clear All
+                <Trash2 className="w-3 h-3" />
+                Clear Canvas
             </Button>
           )}
-        </div>
-
-        <div className="bg-muted/20 rounded p-3 flex-1 flex items-center justify-center border border-dashed border-foreground/10">
-             <div className="flex flex-wrap md:flex-row items-center justify-around w-full gap-x-6 gap-y-3">
-                
-                {/* Step 1 */}
-                <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 text-[10px] font-bold border border-blue-500/50">1</div>
-                    <div className="flex flex-col">
-                        <span className="text-foreground uppercase tracking-tighter text-[8px] opacity-60 leading-none">Create</span>
-                        <span className="italic text-[11px] whitespace-nowrap">Click & Drag on canvas to draw</span>
+      </CardHeader>
+      <CardContent className="p-4 pt-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex flex-col gap-2 p-3 rounded-lg bg-muted/30 border border-muted hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2 mb-1">
+                    <div className="p-1.5 rounded-md bg-muted text-muted-foreground">
+                        <MousePointerClick className="w-4 h-4" />
                     </div>
+                    <span className="font-semibold text-sm">Create</span>
                 </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                    Click and drag anywhere on the empty canvas to draw a new rectangle.
+                </p>
+            </div>
 
-                <div className="h-6 w-px bg-foreground/10 hidden lg:block" />
-
-                {/* Step 2 */}
-                <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 text-[10px] font-bold border border-green-500/50">2</div>
-                    <div className="flex flex-col">
-                        <span className="text-foreground uppercase tracking-tighter text-[8px] opacity-60 leading-none">Move</span>
-                        <span className="italic text-[11px] whitespace-nowrap">Drag shapes to reposition them</span>
+            <div className="flex flex-col gap-2 p-3 rounded-lg bg-muted/30 border border-muted hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2 mb-1">
+                    <div className="p-1.5 rounded-md bg-muted text-muted-foreground">
+                        <Move className="w-4 h-4" />
                     </div>
+                    <span className="font-semibold text-sm">Move</span>
                 </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                    Drag any shape to reposition it. Overlaps are detected automatically.
+                </p>
+            </div>
 
-                <div className="h-6 w-px bg-foreground/10 hidden lg:block" />
-
-                {/* Step 3 */}
-                <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 text-[10px] font-bold border border-amber-500/50">3</div>
-                    <div className="flex flex-col">
-                        <span className="text-foreground uppercase tracking-tighter text-[8px] opacity-60 leading-none">Modify</span>
-                        <span className="italic text-amber-500 text-[11px] whitespace-nowrap font-medium">Hold SHIFT to drag corners</span>
+            <div className="flex flex-col gap-2 p-3 rounded-lg bg-muted/30 border border-muted hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2 mb-1">
+                    <div className="p-1.5 rounded-md bg-muted text-muted-foreground">
+                        <Expand className="w-4 h-4" />
                     </div>
+                    <span className="font-semibold text-sm">Modify</span>
                 </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                    Hold <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">SHIFT</kbd> and drag the corner vertices to reshape the polygon.
+                </p>
+            </div>
 
-                <div className="h-6 w-px bg-foreground/10 hidden lg:block" />
-
-                {/* Step 4 */}
-                <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-500 text-[10px] font-bold border border-purple-500/50">4</div>
-                    <div className="flex flex-col">
-                        <span className="text-foreground uppercase tracking-tighter text-[8px] opacity-60 leading-none">Inspect</span>
-                        <span className="italic text-[11px] whitespace-nowrap">Click shape to see detailed info</span>
+            <div className="flex flex-col gap-2 p-3 rounded-lg bg-muted/30 border border-muted hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-2 mb-1">
+                    <div className="p-1.5 rounded-md bg-muted text-muted-foreground">
+                        <Info className="w-4 h-4" />
                     </div>
+                    <span className="font-semibold text-sm">Inspect</span>
                 </div>
-
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                    Click on any shape (including red intersections) to view geometric details.
+                </p>
             </div>
         </div>
       </CardContent>

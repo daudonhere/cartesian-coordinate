@@ -15,8 +15,6 @@ export function useShapeDrawing({ setShapes, setSelectedShape }: UseShapeDrawing
   const [currentMousePos, setCurrentMousePos] = useState<{x: number, y: number} | null>(null);
 
   const handleMouseDown = useCallback((e: Konva.KonvaEventObject<MouseEvent>) => {
-    // Only start drawing if clicking on empty area (not on a shape)
-    // and not right click
     if (e.target !== e.target.getStage()) return;
     if (e.evt.button !== 0) return;
 
@@ -26,7 +24,7 @@ export function useShapeDrawing({ setShapes, setSelectedShape }: UseShapeDrawing
     setIsDrawing(true);
     setNewShapeStart(pos);
     setCurrentMousePos(pos);
-    setSelectedShape(null); // Deselect when starting to draw
+    setSelectedShape(null); 
   }, [setSelectedShape]);
 
   const handleMouseMove = useCallback((e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -50,7 +48,6 @@ export function useShapeDrawing({ setShapes, setSelectedShape }: UseShapeDrawing
     const x2 = currentMousePos.x;
     const y2 = currentMousePos.y;
     
-    // Ensure minimal size to avoid creating 0 size shapes
     if (Math.abs(x2 - x1) < 5 || Math.abs(y2 - y1) < 5) {
         setIsDrawing(false);
         setNewShapeStart(null);
@@ -63,7 +60,6 @@ export function useShapeDrawing({ setShapes, setSelectedShape }: UseShapeDrawing
     const width = Math.abs(x2 - x1);
     const height = Math.abs(y2 - y1);
     
-    // Relative Points
     const points = [
         0, 0,
         width, 0,
@@ -71,7 +67,7 @@ export function useShapeDrawing({ setShapes, setSelectedShape }: UseShapeDrawing
         0, height
     ];
 
-    const { sides, angles } = calculateGeometryFromPoints(points);
+    const geometry = calculateGeometryFromPoints(points);
     const id = `shape-${Date.now()}`;
     
     setShapes(prev => {
@@ -82,14 +78,12 @@ export function useShapeDrawing({ setShapes, setSelectedShape }: UseShapeDrawing
           x: minX,
           y: minY,
           points: points,
-          sides,
-          angles,
+          ...geometry,
           fillColor: getRandomColor()
         };
         return [...prev, newShape];
     });
     
-    // Reset drawing state
     setIsDrawing(false);
     setNewShapeStart(null);
     setCurrentMousePos(null);

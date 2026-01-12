@@ -1,4 +1,3 @@
-import React from 'react';
 import { Stage, Layer, Group } from 'react-konva';
 import { Button } from "@/components/ui/button"
 import {
@@ -28,7 +27,6 @@ export function DetailDialog({ selectedShape, onClose, onDelete, isShapeExists }
   const scaleY = (300 - padding) / (bounds.height || 1);
   const scale = Math.min(scaleX, scaleY, 1.5);
 
-  // Dummy setter for KonvaShape in read-only mode
   const noop = () => {};
 
   return (
@@ -42,14 +40,13 @@ export function DetailDialog({ selectedShape, onClose, onDelete, isShapeExists }
         </DialogHeader>
         
         <div className="flex flex-col gap-6 py-4">
-            {/* Object Visualization in Dialog (Read-Only) */}
             <div className="border rounded-md overflow-hidden bg-background self-center">
               <Stage width={400} height={300}>
                 <Layer>
                   <Group x={200} y={150} scaleX={scale} scaleY={scale}>
                     <KonvaShape 
                         shape={selectedShape} 
-                        strokeColor="white" // Defaulting to white for simplicity in dialog
+                        strokeColor="white" 
                         textColor="white"
                         forceCenter
                         setHoveredNode={noop}
@@ -63,7 +60,6 @@ export function DetailDialog({ selectedShape, onClose, onDelete, isShapeExists }
               </Stage>
             </div>
 
-            {/* Geometric Information List */}
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm px-4 whitespace-nowrap">
               <div className="space-y-2">
                   <h3 className="font-medium text-muted-foreground border-b pb-1 mb-2">Sides Lengths</h3>

@@ -4,7 +4,6 @@ import type Konva from 'konva'
 import { ModeToggle } from "@/components/mode-toggle"
 import { useTheme } from "@/components/theme-provider"
 
-// Import extracted modules from /lib/konva
 import { calculateAllIntersections } from "@/lib/konva/utils"
 import { Ruler, GridLines } from "@/lib/konva/components"
 import { KonvaShape } from "@/lib/konva/KonvaShape"
@@ -14,25 +13,17 @@ import { DetailDialog } from "@/lib/konva/DetailDialog"
 import { useShapeDrawing } from "@/lib/konva/useShapeDrawing"
 import { useCanvasSync } from "@/lib/konva/useCanvasSync"
 
-/**
- * Main Page HomePage.
- */
 export function HomePage() {
   const { theme } = useTheme();
   const stageWidth = 1000;
   const stageHeight = 400;
 
-  // Use Canvas Sync for state management (Local & DB)
   const { shapes, setShapes, userId } = useCanvasSync();
   
-  // State for the currently selected object
   const [selectedShape, setSelectedShape] = useState<any>(null);
-  // Shift key state for vertex edit mode
   const [isShiftPressed, setIsShiftPressed] = useState(false);
-  // Hovered node state for cursor management
   const [hoveredNode, setHoveredNode] = useState<Konva.Node | null>(null);
 
-  // Use custom hook for drawing logic
   const { 
     isDrawing, 
     newShapeStart, 
@@ -42,16 +33,10 @@ export function HomePage() {
     handleMouseUp 
   } = useShapeDrawing({ setShapes, setSelectedShape });
 
-  /**
-   * Intersection calculation.
-   */
   const intersectionShapes = useMemo(() => {
     return calculateAllIntersections(shapes);
   }, [shapes]);
 
-  /**
-   * Keyboard SHIFT detection.
-   */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Shift') setIsShiftPressed(true);
@@ -67,9 +52,6 @@ export function HomePage() {
     };
   }, []);
 
-  /**
-   * Cursor management.
-   */
   useEffect(() => {
     if (hoveredNode) {
       const container = hoveredNode.getStage()?.container();
@@ -150,7 +132,7 @@ export function HomePage() {
                   <IntersectionShape
                     key={`intersect-${i}`}
                     points={shape.points}
-                    topShapeId={shape.id} // Note: This mapping depends on calculateAllIntersections logic
+                    topShapeId={shape.id} 
                     index={i}
                     stageHeight={stageHeight}
                     stageWidth={stageWidth}

@@ -1,9 +1,5 @@
 import { Line, Layer, Group, Text } from 'react-konva';
 
-/**
- * Component to render a visual ruler (ticks and px labels)
- * on the canvas edges for coordinate reference.
- */
 export function Ruler({ 
   length, 
   orientation, 
@@ -20,9 +16,6 @@ export function Ruler({
   const ticks = [];
   const isHorizontal = orientation === 'horizontal';
 
-  /**
-   * Internal function to render a single tick (marker line) and its label.
-   */
   const renderTick = (pos: number, label: number) => {
     let flexDirection: 'column' | 'column-reverse' | 'row' | 'row-reverse' = 'column';
     if (isHorizontal) {
@@ -76,9 +69,6 @@ export function Ruler({
   );
 }
 
-/**
- * Component to render grid lines (checkered background) on the canvas.
- */
 export function GridLines({ 
   width, 
   height, 
@@ -100,9 +90,6 @@ export function GridLines({
   return <Layer listening={false}>{lines}</Layer>;
 }
 
-/**
- * UI Component to render a summary info (Label, Angle, Area) at the center of an object.
- */
 export const ShapeCenterSummary = ({
   label,
   area,

@@ -1,4 +1,3 @@
-import React from 'react';
 import { intersection } from 'martinez-polygon-clipping'
 
 export interface ShapeData {
@@ -27,20 +26,14 @@ export interface ShapeData {
   totalAngleDeg: number;
   totalAngleRadStr: string;
   fillColor?: string;
-  isIntersection?: boolean; // Flag to distinguish generated overlaps
+  isIntersection?: boolean; 
 }
 
-/**
- * Generates a random color in HSL format.
- */
 export const getRandomColor = () => {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 70%, 50%)`;
 };
 
-/**
- * Formats a numeric radian value into a symbolic mathematical representation (π).
- */
 export const formatRadian = (rad: number) => {
   const piVal = rad / Math.PI;
   if (Math.abs(piVal - 1) < 0.001) return "π";
@@ -49,9 +42,6 @@ export const formatRadian = (rad: number) => {
   return `${piVal.toFixed(2)}π`;
 };
 
-/**
- * Calculates the area of a polygon using the Shoelace algorithm.
- */
 export const getPolygonArea = (points: number[]) => {
   let area = 0;
   for (let i = 0; i < points.length; i += 2) {
@@ -100,9 +90,6 @@ export const getAngle = (ax: number, ay: number, bx: number, by: number, cx: num
   return Math.acos(Math.max(-1, Math.min(1, val)));
 };
 
-/**
- * Calculates complete geometry data from an array of coordinate points.
- */
 export const calculateGeometryFromPoints = (points: number[]) => {
   const [ax, ay, bx, by, cx, cy, dx, dy] = points;
   
@@ -198,9 +185,6 @@ export const getIntersectionPoints = (shape1Points: number[], shape2Points: numb
   });
 };
 
-/**
- * Calculates all intersections and returns them as full ShapeData objects.
- */
 export const calculateAllIntersections = (shapes: ShapeData[]): ShapeData[] => {
   const results: ShapeData[] = [];
   for (let i = 0; i < shapes.length; i++) {

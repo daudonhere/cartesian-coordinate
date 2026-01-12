@@ -1,14 +1,9 @@
-import React from 'react';
 import Konva from 'konva';
 import { Group, Line, Text, Circle } from 'react-konva';
 import { getBounds, getPolygonArea, getSideLabelPos, getVertexLabelPos, calculateGeometryFromPoints, formatRadian } from './utils';
 import type { ShapeData } from './utils';
 import { ShapeCenterSummary } from './components';
 
-/**
- * Main component representing a Geometric Object on the Konva Stage.
- * Handles rendering of lines, vertices, labels, as well as drag & drop interactions.
- */
 export const KonvaShape = ({ 
   shape, 
   strokeColor, 
@@ -75,10 +70,6 @@ export const KonvaShape = ({
   
   const offset = forceCenter ? { x: centerX, y: centerY } : { x: 0, y: 0 };
 
-  /**
-   * Handles drag events on vertices.
-   * Updates object geometry based on new vertex positions.
-   */
   const handlePointDragMove = (idx: number, e: { target: { x: () => number; y: () => number } }) => {
     const node = e.target;
     const newPoints = [...points];
@@ -102,19 +93,12 @@ export const KonvaShape = ({
       x={groupX} y={groupY} 
       draggable={draggable}
       offset={offset}
-      /**
-       * Constrains object movement to stay within the canvas area.
-       */
       dragBoundFunc={(pos) => {
         const newX = Math.max(-b.minX, Math.min(pos.x, stageWidth - b.maxX));
         const newY = Math.max(-b.minY, Math.min(pos.y, stageHeight - b.maxY));
         
         return { x: newX, y: newY };
       }}
-      /**
-       * Handler when object is dragged.
-       * Updates object x and y positions in parent state.
-       */
       onDragMove={(e) => {
         if (e.target.nodeType === 'Group') {
            onUpdate?.({
@@ -126,9 +110,6 @@ export const KonvaShape = ({
       }}
       onClick={() => onClick?.(shape)}
       onTap={() => onClick?.(shape)}
-      /**
-       * Hover Handler: Changes cursor icon and detects active node.
-       */
       onMouseEnter={(e) => {
         setHoveredNode(e.target);
         if (!draggable) {
@@ -136,7 +117,6 @@ export const KonvaShape = ({
            if (container) container.style.cursor = "default";
            return;
         }
-        // If mouse is over object body, use pointer cursor (click).
         if (e.target.className !== 'vertex-circle') {
            const container = e.target.getStage()?.container();
            if (container) container.style.cursor = "pointer";
@@ -192,7 +172,6 @@ export const KonvaShape = ({
 
         return (
           <Group key={v.idx}>
-             {/* Hit Area Vertex: Larger transparent circle for easier clicking/dragging */}
              <Circle 
                 name="vertex-circle"
                 x={v.x} y={v.y} 
@@ -210,10 +189,10 @@ export const KonvaShape = ({
                 onMouseEnter={(e) => {
                   setHoveredNode(e.target);
                   const node = e.target as unknown as { fill: (color: string) => void };
-                  node.fill('red'); // Visual feedback when corner is ready to edit
+                  node.fill('red'); 
                   const container = e.target.getStage()!.container();
                   if (draggable) {
-                    container.style.cursor = 'crosshair'; // Edit cursor (crosshair)
+                    container.style.cursor = 'crosshair'; 
                   } else {
                     container.style.cursor = 'default';
                   }

@@ -1,14 +1,8 @@
-import React from 'react';
 import { Group, Line, Text } from 'react-konva';
 import { calculateGeometryFromPoints, getPolygonArea, getBounds, formatRadian } from './utils';
 import type { ShapeData } from './utils';
 
-/**
- * Component to render the intersection area between two objects.
- * Includes visualization of the red polygon, X/Y reference axes, and dimension labels.
- * Supports click interactions (for dialog) and drag (to move the parent object).
- */
-export const IntersectionShape = ({
+export const IntersectionShape = ({ 
   points,
   topShapeId,
   index,
@@ -17,7 +11,7 @@ export const IntersectionShape = ({
   isDark,
   onDragMoveParent,
   onSelect
-}: {
+}: { 
   points: number[];
   topShapeId: string;
   index: number;
@@ -28,8 +22,9 @@ export const IntersectionShape = ({
   onSelect: (data: ShapeData) => void;
 }) => {
   const area = Math.round(getPolygonArea(points));
-  const { angles } = calculateGeometryFromPoints(points);
-  const sumAnglesRad = Object.values(angles).reduce((acc, curr) => acc + curr, 0);
+  const geometry = calculateGeometryFromPoints(points);
+  const { angles } = geometry;
+  const sumAnglesRad = angles.a + angles.b + angles.c + angles.d;
   const sumAnglesDeg = Math.round((sumAnglesRad * 180) / Math.PI);
   
   const b = getBounds(points);
@@ -43,29 +38,23 @@ export const IntersectionShape = ({
   return (
     <Group 
       draggable={true}
-      /**
-       * Drag Handler on Intersection Object (Object C).
-       * Calls callback to parent to move the parent object.
-       */
       onDragMove={(e) => {
         const dx = e.target.x();
         const dy = e.target.y();
-        // Reset intersection group position so visual offset doesn't accumulate
         e.target.position({ x: 0, y: 0 });
         
         onDragMoveParent(dx, dy, topShapeId);
       }}
       onClick={(e) => {
         e.cancelBubble = true; 
-        const { sides, angles } = calculateGeometryFromPoints(points);
+        
         const intersectionData: ShapeData = {
           id: `intersection-${index}`,
           label: labelLetter,
           x: 0,
           y: 0,
           points: points,
-          sides,
-          angles,
+          ...geometry,
           fillColor: "red"
         };
         onSelect(intersectionData);
@@ -78,8 +67,7 @@ export const IntersectionShape = ({
         const container = e.target.getStage()?.container();
         if (container) container.style.cursor = "default";
       }}
-    >
-      {/* X & Y Reference Lines for Intersection (Dashed) */}
+    > 
       <Line 
         points={[b.minX, 0, b.minX, stageHeight]} 
         stroke={axisColor} 
@@ -95,7 +83,6 @@ export const IntersectionShape = ({
         listening={false}
       />
 
-      {/* X and Y Dimension Labels */}
       <Text 
         x={centerX - 30} y={b.minY - 20} 
         text={`X: ${width}px`} 
@@ -112,7 +99,6 @@ export const IntersectionShape = ({
         listening={false}
       />
 
-      {/* Intersection Polygon Visual (Red) */}
       <Line
         points={points}
         closed
@@ -122,11 +108,11 @@ export const IntersectionShape = ({
         strokeWidth={1}
         listening={true} 
       />
-      {/* Object C / Intersection Label */}
       <Text 
         x={centerX - 60}
         y={centerY - 25}
-        text={`${labelLetter}\nTotal ∠${sumAnglesDeg}° ${formatRadian(sumAnglesRad)}\nA = ${area} px²`}
+        text={`${labelLetter}\nTotal ∠${sumAnglesDeg}° ${formatRadian(sumAnglesRad)}
+A = ${area} px²`}
         fill="white"
         fontSize={12}
         fontStyle="bold italic"
