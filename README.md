@@ -39,7 +39,7 @@ Follow these steps to get the project running locally:
 ### 1. Clone the repository
 ```bash
 git clone <repository-url>
-cd react-starter
+cd cartesian-coordinate
 ```
 
 ### 2. Install dependencies
