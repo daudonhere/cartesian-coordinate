@@ -169,9 +169,9 @@ export const getIntersectionPoints = (shape1Points: number[], shape2Points: numb
   
   let polygons: number[][][][] = [];
   if (Array.isArray(result[0]) && Array.isArray(result[0][0]) && typeof result[0][0][0] === 'number') {
-     polygons = [result as unknown as number[][][]];
+     polygons = [result as number[][][]];
   } else {
-     polygons = result as unknown as number[][][][];
+     polygons = result as number[][][][];
   }
 
   return polygons.map((polygon) => {

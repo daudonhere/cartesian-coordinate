@@ -5,7 +5,7 @@ import type { ShapeData } from './utils';
 export const IntersectionShape = ({ 
   points,
   topShapeId,
-  index,
+  label,
   stageHeight,
   stageWidth,
   isDark,
@@ -14,7 +14,7 @@ export const IntersectionShape = ({
 }: { 
   points: number[];
   topShapeId: string;
-  index: number;
+  label: string;
   stageHeight: number;
   stageWidth: number;
   isDark: boolean;
@@ -33,11 +33,18 @@ export const IntersectionShape = ({
   const width = Math.round(b.maxX - b.minX);
   const height = Math.round(b.maxY - b.minY);
   const axisColor = isDark ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.8)";
-  const labelLetter = String.fromCharCode(67 + index); 
 
   return (
     <Group 
       draggable={true}
+      onDragStart={(e) => {
+        const container = e.target.getStage()?.container();
+        if (container) container.style.cursor = "grabbing";
+      }}
+      onDragEnd={(e) => {
+        const container = e.target.getStage()?.container();
+        if (container) container.style.cursor = "pointer";
+      }}
       onDragMove={(e) => {
         const dx = e.target.x();
         const dy = e.target.y();
@@ -49,8 +56,8 @@ export const IntersectionShape = ({
         e.cancelBubble = true; 
         
         const intersectionData: ShapeData = {
-          id: `intersection-${index}`,
-          label: labelLetter,
+          id: `intersection-${label}`,
+          label: label,
           x: 0,
           y: 0,
           points: points,
@@ -111,7 +118,7 @@ export const IntersectionShape = ({
       <Text 
         x={centerX - 60}
         y={centerY - 25}
-        text={`${labelLetter}\nTotal ∠${sumAnglesDeg}° ${formatRadian(sumAnglesRad)}
+        text={`${label}\nTotal ∠${sumAnglesDeg}° ${formatRadian(sumAnglesRad)}
 A = ${area} px²`}
         fill="white"
         fontSize={12}

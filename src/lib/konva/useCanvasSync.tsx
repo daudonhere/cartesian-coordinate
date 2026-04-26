@@ -9,17 +9,27 @@ const STORAGE_KEY_SHAPES = 'konva_app_shapes_data';
 
 export function useCanvasSync() {
   const [shapes, setShapes] = useState<ShapeData[]>([]);
-  const [userId, setUserId] = useState<string>('');
-  const isLoadedRef = useRef(false);
-
-  useEffect(() => {
+  const [userId] = useState<string>(() => {
     let id = localStorage.getItem(STORAGE_KEY_USER_ID);
     if (!id) {
       id = uuidv4();
       localStorage.setItem(STORAGE_KEY_USER_ID, id);
     }
-    setUserId(id);
-  }, []);
+    return id;
+  });
+  const isLoadedRef = useRef(false);
+
+  const saveToRemote = async (uid: string, data: ShapeData[]) => {
+    try {
+      await fetch(`${API_BASE_URL}/canvas/${uid}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+    } catch (e) {
+      console.error("Remote save failed", e);
+    }
+  };
 
   useEffect(() => {
     if (!userId || isLoadedRef.current) return;
@@ -78,18 +88,6 @@ export function useCanvasSync() {
     const timeoutId = setTimeout(syncChanges, 800); 
     return () => clearTimeout(timeoutId);
   }, [shapes, userId]);
-
-  const saveToRemote = async (uid: string, data: ShapeData[]) => {
-    try {
-      await fetch(`${API_BASE_URL}/canvas/${uid}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-    } catch (e) {
-      console.error("Remote save failed", e);
-    }
-  };
 
   return { shapes, setShapes, userId };
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Line, Layer, Group, Text } from 'react-konva';
 
 export function Ruler({ 
@@ -13,7 +14,7 @@ export function Ruler({
   mode?: 'standard' | 'centered';
   tickSide?: 'in' | 'out';
 }) {
-  const ticks = [];
+  const ticks: React.ReactNode[] = [];
   const isHorizontal = orientation === 'horizontal';
 
   const renderTick = (pos: number, label: number) => {
@@ -24,13 +25,14 @@ export function Ruler({
       flexDirection = tickSide === 'in' ? 'row' : 'row-reverse';
     }
 
+    const pixelPos = Math.round(pos);
     return (
       <div
         key={pos}
         className="absolute flex items-center justify-center select-none"
         style={{
-          left: isHorizontal ? `${pos}px` : '0',
-          top: !isHorizontal ? `${pos}px` : '0',
+          left: isHorizontal ? `${pixelPos}px` : '0',
+          top: !isHorizontal ? `${pixelPos}px` : '0',
           width: isHorizontal ? 'auto' : '100%',
           height: isHorizontal ? '100%' : 'auto',
           transform: isHorizontal ? 'translateX(-50%)' : 'translateY(-50%)',
@@ -38,11 +40,16 @@ export function Ruler({
           gap: '2px'
         }}
       >
-        <span className="text-[9px] text-foreground font-serif italic font-bold leading-none whitespace-nowrap">
+        <span 
+          className="text-[9px] text-foreground font-serif italic font-bold leading-none whitespace-nowrap"
+          style={{
+            transform: isHorizontal ? 'none' : (tickSide === 'in' ? 'translateX(-2px)' : 'translateX(2px)')
+          }}
+        >
           {label} px
         </span>
         <div 
-          className={`bg-foreground/50 ${isHorizontal ? 'w-px h-2' : 'h-px w-2'}`} 
+          className={`bg-foreground/50 shrink-0 ${isHorizontal ? 'w-px h-2' : 'h-px w-2'}`} 
         />
       </div>
     );
@@ -51,10 +58,10 @@ export function Ruler({
   if (mode === 'centered') {
     const center = length / 2;
     for (let pos = center; pos <= length; pos += step) {
-      ticks.push(renderTick(pos, pos - center));
+      ticks.push(renderTick(pos, Math.round(pos - center)));
     }
     for (let pos = center - step; pos >= 0; pos -= step) {
-      ticks.push(renderTick(pos, pos - center));
+      ticks.push(renderTick(pos, Math.round(pos - center)));
     }
   } else {
     for (let i = 0; i <= length; i += step) {
@@ -73,20 +80,37 @@ export function GridLines({
   width, 
   height, 
   stroke,
-  step = 100 
+  step = 100,
+  centered = false
 }: { 
   width: number; 
   height: number; 
   stroke: string;
-  step?: number 
+  step?: number;
+  centered?: boolean;
 }) {
-  const lines = [];
-  for (let x = 0; x <= width; x += step) {
-    lines.push(<Line key={`x-${x}`} points={[x, 0, x, height]} stroke={stroke} strokeWidth={0.3} dash={[2, 2]} />);
-  }
-  for (let y = 0; y <= height; y += step) {
-    lines.push(<Line key={`y-${y}`} points={[0, y, width, y]} stroke={stroke} strokeWidth={0.3} dash={[2, 2]} />);
-  }
+  const lines: React.ReactNode[] = [];
+  const renderAxis = (limit: number, otherLimit: number, isVertical: boolean) => {
+    const center = centered ? limit / 2 : 0;
+    const draw = (pos: number) => {
+      const pixelPos = Math.round(pos) + 0.5;
+      lines.push(
+        <Line 
+          key={`${isVertical ? 'x' : 'y'}-${pos}`} 
+          points={isVertical ? [pixelPos, 0, pixelPos, otherLimit] : [0, pixelPos, otherLimit, pixelPos]} 
+          stroke={stroke} 
+          strokeWidth={0.3} 
+          dash={[2, 2]} 
+        />
+      );
+    };
+    for (let pos = center; pos <= limit; pos += step) draw(pos);
+    if (centered) {
+      for (let pos = center - step; pos >= 0; pos -= step) draw(pos);
+    }
+  };
+  renderAxis(width, height, true);
+  renderAxis(height, width, false);
   return <Layer listening={false}>{lines}</Layer>;
 }
 

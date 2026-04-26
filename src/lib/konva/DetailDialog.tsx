@@ -10,6 +10,7 @@ import {
 import { KonvaShape } from './KonvaShape';
 import { getBounds, formatRadian } from './utils';
 import type { ShapeData } from './utils';
+import { useTheme } from "@/components/theme-provider"
 
 interface DetailDialogProps {
   selectedShape: ShapeData | null;
@@ -19,7 +20,13 @@ interface DetailDialogProps {
 }
 
 export function DetailDialog({ selectedShape, onClose, onDelete, isShapeExists }: DetailDialogProps) {
+  const { theme } = useTheme();
+  
   if (!selectedShape) return null;
+
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const strokeColor = isDark ? "white" : "black";
+  const textColor = isDark ? "#cccccc" : "#333333";
 
   const bounds = getBounds(selectedShape.points);
   const padding = 40; 
@@ -46,8 +53,8 @@ export function DetailDialog({ selectedShape, onClose, onDelete, isShapeExists }
                   <Group x={200} y={150} scaleX={scale} scaleY={scale}>
                     <KonvaShape 
                         shape={selectedShape} 
-                        strokeColor="white" 
-                        textColor="white"
+                        strokeColor={strokeColor} 
+                        textColor={textColor}
                         forceCenter
                         setHoveredNode={noop}
                         stageWidth={400} 
@@ -72,7 +79,7 @@ export function DetailDialog({ selectedShape, onClose, onDelete, isShapeExists }
               </div>
 
               <div className="space-y-2">
-                  <h3 className="font-medium text-muted-foreground border-b pb-1 mb-2">Angles Degrees & Radians</h3>
+                  <h3 className="font-medium text-muted-foreground border-b pb-1 mb-2">Degrees & Radians</h3>
                   <div className="grid grid-cols-2 gap-4 italic font-bold font-serif">
                     <div>∠A = {Math.round(selectedShape.angles.a * 180 / Math.PI)}° <span className="ml-1">{formatRadian(selectedShape.angles.a)}</span></div>
                     <div>∠B = {Math.round(selectedShape.angles.b * 180 / Math.PI)}° <span className="ml-1">{formatRadian(selectedShape.angles.b)}</span></div>
@@ -85,7 +92,7 @@ export function DetailDialog({ selectedShape, onClose, onDelete, isShapeExists }
             {isShapeExists && (
               <div className="flex justify-end px-4 pt-4 border-t mt-4">
                 <Button 
-                  className="bg-red-500 hover:bg-red-600 text-white"
+                  className="bg-red-500 hover:bg-red-600 text-white cursor-pointer"
                   onClick={() => onDelete(selectedShape.id)}
                 >
                   Delete Shape

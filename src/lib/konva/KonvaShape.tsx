@@ -99,6 +99,18 @@ export const KonvaShape = ({
         
         return { x: newX, y: newY };
       }}
+      onDragStart={(e) => {
+        if (e.target.nodeType === 'Group') {
+          const container = e.target.getStage()?.container();
+          if (container) container.style.cursor = "grabbing";
+        }
+      }}
+      onDragEnd={(e) => {
+        if (e.target.nodeType === 'Group') {
+          const container = e.target.getStage()?.container();
+          if (container) container.style.cursor = "pointer";
+        }
+      }}
       onDragMove={(e) => {
         if (e.target.nodeType === 'Group') {
            onUpdate?.({
@@ -185,22 +197,34 @@ export const KonvaShape = ({
                     y: Math.max(0, Math.min(pos.y, stageHeight))
                   };
                 }}
+                onDragStart={(e) => {
+                  const container = e.target.getStage()?.container();
+                  if (container) container.style.cursor = "grabbing";
+                }}
+                onDragEnd={(e) => {
+                  const container = e.target.getStage()?.container();
+                  if (container) {
+                    container.style.cursor = isShiftPressed ? "cell" : "pointer";
+                  }
+                }}
                 onDragMove={(e) => handlePointDragMove(v.idx, e)}
                 onMouseEnter={(e) => {
                   setHoveredNode(e.target);
-                  const node = e.target as unknown as { fill: (color: string) => void };
-                  node.fill('red'); 
+                  if (e.target instanceof Konva.Shape) {
+                    e.target.fill('red');
+                  }
                   const container = e.target.getStage()!.container();
                   if (draggable) {
-                    container.style.cursor = 'crosshair'; 
+                    container.style.cursor = isShiftPressed ? 'cell' : 'pointer'; 
                   } else {
                     container.style.cursor = 'default';
                   }
                 }}
                 onMouseLeave={(e) => {
                   setHoveredNode(null);
-                  const node = e.target as unknown as { fill: (color: string) => void };
-                  node.fill('transparent');
+                  if (e.target instanceof Konva.Shape) {
+                    e.target.fill('transparent');
+                  }
                   const container = e.target.getStage()?.container();
                   if (container) container.style.cursor = "default";
                 }}
